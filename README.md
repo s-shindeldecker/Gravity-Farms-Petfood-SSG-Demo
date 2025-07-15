@@ -36,8 +36,8 @@ A modern Next.js application demonstrating real-time feature flagging with Launc
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
-   cd gravity-farms-nextjs
+   git clone https://github.com/s-shindeldecker/Gravity-Farms-Petfood-SSG-Demo
+   cd Gravity-Farms-Petfood-SSG-Demo
    ```
 
 2. **Install dependencies**
