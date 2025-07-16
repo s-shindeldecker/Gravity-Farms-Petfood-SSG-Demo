@@ -63,7 +63,7 @@ export const Header = () => {
           <li style={{ margin: '0 32px' }}><Link href="/about" className="no-underline text-[#333] font-medium transition-colors duration-200 hover:text-[#4caf50] whitespace-nowrap" style={{ fontSize: '1.125rem' }}>About Us</Link></li>
           <li style={{ margin: '0 32px' }}><Link href="/why-gravity-farms" className="no-underline text-[#333] font-medium transition-colors duration-200 hover:text-[#4caf50] whitespace-nowrap" style={{ fontSize: '1.125rem' }}>Why Gravity Farms?</Link></li>
           <li style={{ margin: '0 32px' }}><Link href="/faq" className="no-underline text-[#333] font-medium transition-colors duration-200 hover:text-[#4caf50] whitespace-nowrap" style={{ fontSize: '1.125rem' }}>FAQ</Link></li>
-          <li style={{ margin: '0 32px' }}><a href="#" className="no-underline text-[#333] font-medium transition-colors duration-200 hover:text-[#4caf50] whitespace-nowrap" style={{ fontSize: '1.125rem' }}>For Vet Professionals</a></li>
+          <li style={{ margin: '0 32px' }}><Link href="/for-vet-professionals" className="no-underline text-[#333] font-medium transition-colors duration-200 hover:text-[#4caf50] whitespace-nowrap" style={{ fontSize: '1.125rem' }}>For Vet Professionals</Link></li>
           {user && !user.anonymous && (
             <li style={{ margin: '0 32px' }}><a href="#" onClick={() => {}} className="no-underline text-[#333] font-medium transition-colors duration-200 hover:text-[#4caf50] whitespace-nowrap" style={{ fontSize: '1.125rem' }}>Account</a></li>
           )}
