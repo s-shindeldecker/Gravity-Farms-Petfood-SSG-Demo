@@ -6,7 +6,7 @@ export const SeasonalBanner = () => {
   const { value: bannerText, isLoading } = useSeasonalBannerText();
 
   // Don't render anything if there's no banner text or if still loading
-  if (isLoading || !bannerText || bannerText.trim() === '') {
+  if (isLoading || !bannerText || typeof bannerText !== 'string' || bannerText.trim() === '') {
     return null;
   }
 

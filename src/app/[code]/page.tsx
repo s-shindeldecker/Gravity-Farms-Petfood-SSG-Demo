@@ -1,8 +1,24 @@
-import { getPrecomputed } from 'flags/next';
+import { getPrecomputed, generatePermutations } from 'flags/next';
 import { flags } from '@/lib/flags';
 import { AppContent } from '@/components/AppContent';
 import { LaunchDarklyDebug } from '@/components/LaunchDarklyDebug';
 import { DebugPanel } from '@/components/DebugPanel';
+
+// Generate static params at build time using all flag permutations
+export async function generateStaticParams() {
+  try {
+    // Generate all possible flag permutations
+    const permutations = await generatePermutations(flags);
+    console.log('[BUILD] Generated permutations count:', permutations.length);
+    
+    // Return an array of { code } objects for each permutation
+    return permutations.map(code => ({ code }));
+  } catch (error) {
+    console.error('[BUILD] Error generating static params:', error);
+    // Fallback to a default code if generatePermutations fails
+    return [{ code: 'default' }];
+  }
+}
 
 export default async function HomePage({
   params,

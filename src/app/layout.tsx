@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { LaunchDarklyWrapper, LaunchDarklyContextUpdater } from '@/components/LaunchDarklyWrapper';
+import { BootstrappedLDProvider } from '@/components/BootstrappedLDProvider';
 import { UserProvider } from '@/context/UserContext';
+import { LaunchDarklyContextUpdater } from '@/components/LaunchDarklyWrapper';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +31,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        <LaunchDarklyWrapper>
+        <BootstrappedLDProvider>
           <UserProvider>
             <LaunchDarklyContextUpdater />
             {children}
           </UserProvider>
-        </LaunchDarklyWrapper>
+        </BootstrappedLDProvider>
       </body>
     </html>
   );
