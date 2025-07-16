@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useHeroBannerText, useTrialDays, useShowTrialButton } from '@/hooks/useLaunchDarklyFlag';
+import { useLDClient } from 'launchdarkly-react-client-sdk';
 
 const DEFAULT_BANNER = {
   'banner-text': 'Fresh, healthy meals delivered',
@@ -19,6 +20,8 @@ export const HeroSection = () => {
   const { value: bannerConfig = DEFAULT_BANNER } = useHeroBannerText();
   const { value: trialDays = 7, isLoading: isTrialDaysLoading } = useTrialDays();
   const [showModal, setShowModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const client = useLDClient();
 
   const imageFile = bannerConfig['image-file'] || DEFAULT_BANNER['image-file'];
   const isFlagValid = imageFile && typeof imageFile === 'string' && imageFile.trim() !== '';
@@ -34,6 +37,34 @@ export const HeroSection = () => {
   // Create dynamic trial text
   const trialButtonText = `Try ${trialDays} Days Free`;
   const trialModalText = `Get ${trialDays} days of fresh, customized meals for your dog.`;
+
+  const handleTrialButtonClick = () => {
+    // Track trial button click
+    if (client) {
+      client.track('trial_button_click', {
+        trial_days: trialDays
+      });
+      console.log('[HeroSection] Tracked trial_button_click event');
+    }
+    setShowModal(true);
+  };
+
+  const handleTrialSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Track trial signup
+    if (client) {
+      client.track('trial_signup', {
+        email: email,
+        trial_days: trialDays
+      });
+      console.log('[HeroSection] Tracked trial_signup event');
+    }
+    
+    setShowModal(false);
+    setEmail('');
+    alert('Thank you for your interest! This is a demo site.');
+  };
 
   // Position classes based on justification
   const getPositionClasses = () => {
@@ -103,7 +134,7 @@ export const HeroSection = () => {
       {(!isButtonLoading && !isTrialDaysLoading && showTrialButton) && (
         <div className="absolute bottom-[10%] left-1/2 transform -translate-x-1/2 z-20 w-full flex justify-center">
           <button 
-            onClick={() => setShowModal(true)}
+            onClick={handleTrialButtonClick}
             className="px-12 py-6 bg-[#FFD166] text-[#35524A] border-none rounded-xl font-bold cursor-pointer transition-all duration-300 hover:bg-[#D7263D] hover:text-white hover:scale-105 shadow-lg hover:shadow-xl"
             style={{ fontSize: '1.875rem' }}
           >
@@ -113,22 +144,54 @@ export const HeroSection = () => {
       )}
       
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]" onClick={() => setShowModal(false)}>
-          <div className="bg-white p-10 rounded-xl max-w-[600px] w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
-            <h2 className="font-bold mb-8 text-[#35524A]" style={{ fontSize: '2.25rem' }}>Start Your Free Trial Today!</h2>
-            <p className="mb-8 text-[#555]" style={{ fontSize: '1.25rem' }}>{trialModalText}</p>
-            <form className="trial-form" onSubmit={e => {e.preventDefault(); setShowModal(false); alert('Thank you for your interest! This is a demo site.');}}>
+        <div 
+          className="fixed inset-0 flex items-center justify-center z-[1000]" 
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)'
+          }}
+          onClick={() => setShowModal(false)}
+        >
+          <div 
+            className="p-8 rounded-2xl max-w-[500px] w-full mx-4" 
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.98)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255, 255, 255, 0.5)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1)'
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h2 className="font-bold mb-4 text-[#35524A]" style={{ fontSize: '1.875rem' }}>Start Your Free Trial Today!</h2>
+            <p className="mb-6 text-[#666] leading-relaxed" style={{ fontSize: '1.125rem' }}>{trialModalText}</p>
+            <form className="space-y-4" onSubmit={handleTrialSignup}>
               <input 
                 type="email" 
                 placeholder="Enter your email" 
                 required 
-                className="w-full p-5 mb-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#35524A] focus:border-transparent"
-                style={{ fontSize: '1.125rem' }}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35524A]/20 focus:border-[#35524A] transition-all duration-200"
+                style={{ fontSize: '1rem' }}
               />
-              <button type="submit" className="cta-button w-full py-5" style={{ fontSize: '1.125rem' }}>Get Started</button>
+              <button 
+                type="submit" 
+                className="w-full py-4 bg-[#FFD166] text-[#35524A] rounded-xl font-semibold transition-all duration-200 hover:bg-[#FFC233] hover:shadow-lg transform hover:scale-[1.02]" 
+                style={{ fontSize: '1.125rem' }}
+              >
+                Get Started
+              </button>
             </form>
-            <p className="text-gray-600 mt-8" style={{ fontSize: '1rem' }}>No commitment required. Cancel anytime.</p>
-            <button onClick={() => setShowModal(false)} className="mt-8 px-8 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200" style={{ fontSize: '1.125rem' }}>Close</button>
+            <p className="text-gray-500 mt-6 text-center" style={{ fontSize: '0.875rem' }}>No commitment required. Cancel anytime.</p>
+            <button 
+              onClick={() => setShowModal(false)} 
+              className="mt-6 w-full py-3 text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all duration-200" 
+              style={{ fontSize: '1rem' }}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
