@@ -6,6 +6,19 @@ import { useState } from 'react';
 import { useUser, getRandomUserProfile } from '@/context/UserContext';
 import { PersonaModal } from './PersonaModal';
 
+// Helper function to set persona cookie
+const setPersonaCookie = (profile: any) => {
+  const cookieValue = encodeURIComponent(JSON.stringify(profile));
+  document.cookie = `persona=${cookieValue}; path=/; max-age=86400; SameSite=Lax`; // 24 hours
+  console.log('[Header] Set persona cookie for:', profile.key);
+};
+
+// Helper function to clear persona cookie
+const clearPersonaCookie = () => {
+  document.cookie = 'persona=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  console.log('[Header] Cleared persona cookie');
+};
+
 export const Header = () => {
   const { user, login, logout } = useUser();
   const [showPersonaModal, setShowPersonaModal] = useState(false);
@@ -59,6 +72,7 @@ export const Header = () => {
               <a href="#" onClick={(e) => { 
                 e.preventDefault(); 
                 console.log('[Header] Logging out, current user:', user.key, 'anonymous:', user.anonymous);
+                clearPersonaCookie(); // Clear persona cookie on logout
                 logout(); 
                 console.log('[Header] Logout called');
               }} className="no-underline text-[#333] font-medium transition-colors duration-200 hover:text-[#4caf50] whitespace-nowrap" style={{ fontSize: '1.125rem' }}>Log Out</a>
@@ -78,6 +92,7 @@ export const Header = () => {
         onClose={() => setShowPersonaModal(false)}
         onSelect={(profile) => {
           console.log('[Header] Selected persona:', profile);
+          setPersonaCookie(profile); // Set persona cookie on login
           login(profile);
           setShowPersonaModal(false);
         }}

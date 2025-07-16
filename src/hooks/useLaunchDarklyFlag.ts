@@ -26,20 +26,47 @@ export const useHeroBannerText = () => {
     };
   }
   
-  return { value: undefined, isLoading: false };
+  // Fallback to mock data if no flags loaded
+  return { 
+    value: {
+      'banner-text': 'Fresh, healthy meals crafted in Gravity Falls',
+      'banner-text-color': '#FFFFFF',
+      'sub-banner-text': "Start your pup's journey to better health with our free trial",
+      'sub-banner-text-color': '#FFFFFF',
+      'horiz-justification': 'center',
+      'vert-justification': 'top',
+      'image-file': 'hero-control.jpeg',
+    }, 
+    isLoading: false 
+  };
 };
 
 export const useTrialDays = () => {
   const flags = useFlags();
-  return { value: flags['numberOfDaysTrial'], isLoading: false };
+  const trialDays = flags['numberOfDaysTrial'];
+  
+  // Ensure we return a number value
+  const value = typeof trialDays === 'number' ? trialDays : 7;
+  
+  return { value, isLoading: false };
 };
 
 export const useShowTrialButton = () => {
   const flags = useFlags();
-  return { value: flags['showTrialButton'], isLoading: false };
+  const showButton = flags['showTrialButton'];
+  
+  // Ensure we return a boolean value
+  const value = typeof showButton === 'boolean' ? showButton : true;
+  
+  return { value, isLoading: false };
 };
 
 export const useSeasonalBannerText = () => {
   const flags = useFlags();
-  return { value: flags['seasonalSaleBannerText'], isLoading: false };
+  const bannerText = flags['seasonalSaleBannerText'];
+  
+  // Ensure we return a string value
+  const value = typeof bannerText === 'string' ? bannerText : '🎉 Limited Time: 20% off your first order!';
+  
+  return { value, isLoading: false };
 }; 
